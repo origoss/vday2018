@@ -1,212 +1,55 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   id="svg8"
-   version="1.1"
-   viewBox="0.2 0 145.22711 95.730583"
-   height="95.730583mm"
-   width="145.22711mm">
-  <defs
-     id="defs2">
-    <symbol
-       viewBox="0 0 20 20"
-       id="arrow-right-alt">
-      <title
-         id="title4201">arrow-right-alt</title>
-      <path
-         id="path4203"
-         d="M 0.52916667,2.9104167 V 2.38125 H 3.7041667 L 2.6458333,1.3229167 2.9104167,0.79375 4.7625,2.6458333 2.9104167,4.4979167 2.6458333,3.96875 3.7041667,2.9104167 Z"
-         style="stroke-width:0.26458332" />
-    </symbol>
-    <symbol
-       viewBox="0 0 20 20"
-       id="filter">
-      <title
-         id="title4596">filter</title>
-      <path
-         id="path4598"
-         d="M 0.79375,1.190625 V 0.66145833 c 0,0 0.8837083,-0.26458333 1.8520833,-0.26458333 0.968375,0 1.8520834,0.26458333 1.8520834,0.26458333 V 1.190625 L 3.175,3.0506458 v 1.8441459 c 0,0 -0.3227917,-0.023813 -0.5953125,-0.1561042 C 2.3071667,4.6063958 2.1166667,4.365625 2.1166667,4.365625 V 3.0506458 Z"
-         style="stroke-width:0.26458332" />
-    </symbol>
-  </defs>
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     transform="translate(-1.3454859,-81.155799)"
-     id="layer1">
-    <g
-       id="g93125">
-      <path
-         style="fill:none;stroke:#000000;stroke-width:1.36500001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="m 18.708867,81.84802 v 94.34614"
-         id="path92254" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:1.36500001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 18.708867,162.42979 H 34.477769"
-         id="path92254-3" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:1.36500001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 18.708866,126.71638 H 34.477769"
-         id="path92254-3-6" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:1.36500001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 18.640699,91.002977 H 34.409601"
-         id="path92254-3-7" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:1.36500001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 2.3058744,168.07538 H 18.074776"
-         id="path92254-3-5" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:1.36500001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 2.3058734,132.36197 H 18.074776"
-         id="path92254-3-6-3" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:1.36500001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 2.2377064,96.648563 H 18.006606"
-         id="path92254-3-7-5" />
-    </g>
-    <g
-       transform="matrix(2.4577002,0,0,1.24108,-96.663671,1.3093981)"
-       style="fill:#21a42d;fill-opacity:1"
-       id="g94123">
-      <use
-         id="use94039"
-         style="fill:#21a42d;fill-opacity:1;stroke:none;stroke-opacity:1"
-         xlink:href="#arrow-right-alt"
-         x="0"
-         y="0"
-         width="100%"
-         height="100%"
-         transform="matrix(0.39871872,0,0,0.39871872,43.059197,69.062119)" />
-      <use
-         transform="matrix(0.39871872,0,0,0.39871872,43.059197,90.087324)"
-         height="100%"
-         width="100%"
-         y="0"
-         x="0"
-         xlink:href="#arrow-right-alt"
-         style="fill:#21a42d;fill-opacity:1;stroke:none;stroke-opacity:1"
-         id="use94053" />
-      <use
-         id="use94055"
-         style="fill:#21a42d;fill-opacity:1;stroke:none;stroke-opacity:1"
-         xlink:href="#arrow-right-alt"
-         x="0"
-         y="0"
-         width="100%"
-         height="100%"
-         transform="matrix(0.39871872,0,0,0.39871872,43.059197,111.11252)" />
-      <use
-         transform="matrix(0.39871872,0,0,0.39871872,43.059197,132.13772)"
-         height="100%"
-         width="100%"
-         y="0"
-         x="0"
-         xlink:href="#arrow-right-alt"
-         style="fill:#21a42d;fill-opacity:1;stroke:none;stroke-opacity:1"
-         id="use94057" />
-    </g>
-    <use
-       transform="matrix(1.0844115,0,0,0.54760199,95.299994,121.86465)"
-       height="100%"
-       width="100%"
-       y="0"
-       x="0"
-       xlink:href="#arrow-right-alt"
-       style="opacity:1;fill:#21a42d;fill-opacity:1;stroke:none;stroke-opacity:1"
-       id="use94039-6" />
-    <rect
-       y="86.650108"
-       x="58.307457"
-       height="85.859131"
-       width="32.464638"
-       id="rect94371"
-       style="opacity:1;fill:#66e18d;fill-opacity:1;stroke:#000000;stroke-width:1.16622627;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <text
-       id="text94375"
-       y="97.112617"
-       x="73.011368"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.59289551px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:tb-rl;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.36482239"
-       xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.59289551px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:tb-rl;text-anchor:start;stroke-width:0.36482239"
-         y="73.011368"
-         x="97.112617"
-         id="tspan94373">KERNEL</tspan></text>
-    <rect
-       y="86.650108"
-       x="90.772095"
-       height="85.859131"
-       width="32.464638"
-       id="rect94371-4"
-       style="opacity:1;fill:#66e18d;fill-opacity:1;stroke:#000000;stroke-width:1.16622627;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <text
-       id="text94375-2"
-       y="107.27332"
-       x="105.48312"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.59300613px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:tb-rl;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.36482239"
-       xml:space="preserve"><tspan
-         y="105.48312"
-         x="107.27332"
-         id="tspan94398">USER</tspan></text>
-    <g
-       id="g94422">
-      <use
-         id="use94076"
-         style="fill:#eb0f0f;fill-opacity:1;stroke:none"
-         xlink:href="#filter"
-         x="0"
-         y="0"
-         width="100%"
-         height="100%"
-         transform="matrix(0.60855995,0,0,0.60855995,93.738826,156.85035)" />
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:7.0184207px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.17546052"
-         x="114.62725"
-         y="164.0352"
-         id="text94417"><tspan
-           id="tspan94415"
-           x="114.62725"
-           y="164.0352"
-           style="stroke-width:0.17546052">?</tspan></text>
-    </g>
-    <g
-       id="g94422-0"
-       transform="translate(-32.252656,0.16801574)">
-      <use
-         id="use94076-5"
-         style="fill:#eb0f0f;fill-opacity:1;stroke:none"
-         xlink:href="#filter"
-         x="0"
-         y="0"
-         width="100%"
-         height="100%"
-         transform="matrix(0.60855995,0,0,0.60855995,93.738826,156.85035)" />
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:7.0184207px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.17546052"
-         x="114.62725"
-         y="164.0352"
-         id="text94417-5"><tspan
-           id="tspan94415-2"
-           x="114.62725"
-           y="164.0352"
-           style="stroke-width:0.17546052">?</tspan></text>
-    </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="145.23mm" height="95.731mm" version="1.1" viewBox=".2 0 145.23 95.731" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <symbol id="arrow-right-alt" viewBox="0 0 20 20">
+   <title>arrow-right-alt</title>
+   <path d="m0.52917 2.9104v-0.52917h3.175l-1.0583-1.0583 0.26458-0.52917 1.8521 1.8521-1.8521 1.8521-0.26458-0.52917 1.0583-1.0583z" stroke-width=".26458"/>
+  </symbol>
+  <symbol id="filter" viewBox="0 0 20 20">
+   <title>filter</title>
+   <path d="m0.79375 1.1906v-0.52917s0.88371-0.26458 1.8521-0.26458 1.8521 0.26458 1.8521 0.26458v0.52917l-1.3229 1.86v1.8441s-0.32279-0.023813-0.59531-0.1561c-0.27252-0.13229-0.46302-0.37306-0.46302-0.37306v-1.315z" stroke-width=".26458"/>
+  </symbol>
+ </defs>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g transform="translate(-1.3455 -81.156)">
+  <g fill="none" stroke="#000" stroke-linecap="round" stroke-width="1.365">
+   <path d="m18.709 81.848v94.346"/>
+   <path d="m18.709 162.43h15.769"/>
+   <path d="m18.709 126.72h15.769"/>
+   <path d="m18.641 91.003h15.769"/>
+   <path d="m2.3059 168.08h15.769"/>
+   <path d="m2.3059 132.36h15.769"/>
+   <path d="m2.2377 96.649h15.769"/>
   </g>
+  <g>
+   <g transform="matrix(2.4577 0 0 1.2411 -96.664 1.3094)" fill="#21a42d">
+    <use transform="matrix(.39872 0 0 .39872 43.059 69.062)" width="100%" height="100%" xlink:href="#arrow-right-alt"/>
+    <use transform="matrix(.39872 0 0 .39872 43.059 90.087)" width="100%" height="100%" xlink:href="#arrow-right-alt"/>
+    <use transform="matrix(.39872 0 0 .39872 43.059 111.11)" width="100%" height="100%" xlink:href="#arrow-right-alt"/>
+    <use transform="matrix(.39872 0 0 .39872 43.059 132.14)" width="100%" height="100%" xlink:href="#arrow-right-alt"/>
+   </g>
+   <use transform="matrix(1.0844 0 0 .5476 95.3 121.86)" width="100%" height="100%" fill="#21a42d" xlink:href="#arrow-right-alt"/>
+   <rect x="58.307" y="86.65" width="32.465" height="85.859" fill="#66e18d" stroke="#000" stroke-linecap="round" stroke-width="1.1662"/>
+   <text x="73.011368" y="97.112617" fill="#000000" font-family="sans-serif" font-size="14.593px" font-weight="bold" letter-spacing="0px" stroke-width=".36482" word-spacing="0px" writing-mode="tb-rl" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:1.25" xml:space="preserve"><tspan x="97.112617" y="73.011368" font-family="sans-serif" font-size="14.593px" font-weight="bold" stroke-width=".36482" writing-mode="tb-rl" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal">KERNEL</tspan></text>
+   <rect x="90.772" y="86.65" width="32.465" height="85.859" fill="#66e18d" stroke="#000" stroke-linecap="round" stroke-width="1.1662"/>
+   <text x="105.48312" y="107.27332" fill="#000000" font-family="sans-serif" font-size="14.593px" font-weight="bold" letter-spacing="0px" stroke-width=".36482" word-spacing="0px" writing-mode="tb-rl" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:1.25" xml:space="preserve"><tspan x="107.27332" y="105.48312">USER</tspan></text>
+  </g>
+  <g>
+   <use transform="matrix(.60856 0 0 .60856 93.739 156.85)" width="100%" height="100%" fill="#eb0f0f" xlink:href="#filter"/>
+   <text x="114.62725" y="164.0352" fill="#000000" font-family="sans-serif" font-size="7.0184px" letter-spacing="0px" stroke-width=".17546" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="114.62725" y="164.0352" stroke-width=".17546">?</tspan></text>
+  </g>
+  <g transform="translate(-32.253 .16802)">
+   <use transform="matrix(.60856 0 0 .60856 93.739 156.85)" width="100%" height="100%" fill="#eb0f0f" xlink:href="#filter"/>
+   <text x="114.62725" y="164.0352" fill="#000000" font-family="sans-serif" font-size="7.0184px" letter-spacing="0px" stroke-width=".17546" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="114.62725" y="164.0352" stroke-width=".17546">?</tspan></text>
+  </g>
+ </g>
 </svg>
