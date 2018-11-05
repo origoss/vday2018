@@ -11900,12 +11900,22 @@ a.anchor-link {
 
 <div class="reveal">
 <div class="slides">
-<section><section>
+<aside class="notes">
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Cloud-Native-Monitoring-with-EBPF">Cloud-Native Monitoring with EBPF<a class="anchor-link" href="#Cloud-Native-Monitoring-with-EBPF">&#182;</a></h1><p>gergely.szabo@origoss.com</p>
+<h1 id="Preparations">Preparations<a class="anchor-link" href="#Preparations">&#182;</a></h1>
+</div>
+</div>
+</div>
+</aside><section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Efficient-System-Monitoring-in-Cloud-Native-Environments">Efficient System Monitoring in Cloud Native Environments<a class="anchor-link" href="#Efficient-System-Monitoring-in-Cloud-Native-Environments">&#182;</a></h1><p>gergely.szabo@origoss.com</p>
 
 </div>
 </div>
@@ -11934,9 +11944,9 @@ a.anchor-link {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Agenda">Agenda<a class="anchor-link" href="#Agenda">&#182;</a></h1><ul>
 <li>BPF</li>
-<li>Linux Kernel Tracing</li>
+<li>Linux kernel tracing</li>
 <li>EBPF</li>
-<li>Prometheus Exporter</li>
+<li>EBPF-based in monitoring in the cloud</li>
 </ul>
 
 </div>
@@ -11954,7 +11964,7 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Packet-Filtering-Problem">Packet Filtering Problem<a class="anchor-link" href="#Packet-Filtering-Problem">&#182;</a></h1><p><img src="filter.svg" alt="network filtering" title="Network filtering"></p>
+<h1 id="Packet-Filtering-Problem">Packet Filtering Problem<a class="anchor-link" href="#Packet-Filtering-Problem">&#182;</a></h1><p><img src="filter_v2.svg" alt="network filtering" title="Network filtering"></p>
 
 </div>
 </div>
@@ -11968,15 +11978,6 @@ a.anchor-link {
 <li>Flexible filter rules</li>
 <li>Safe</li>
 </ul>
-
-</div>
-</div>
-</div></section><section>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Where-to-Filter?">Where to Filter?<a class="anchor-link" href="#Where-to-Filter?">&#182;</a></h1><p><img src="filter2.svg" alt="Where to filter?" title="Where to Filter?"></p>
 
 </div>
 </div>
@@ -12065,7 +12066,7 @@ sudo tcpdump -nc <span class="m">4</span> <span class="s1">&#39;tcp port 80 and 
 </div>
 </div>
 
-</div><section>
+</div></section><section>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12163,28 +12164,6 @@ tcpdump -d <span class="s1">&#39;tcp port 80 and (((ip[2:2] - ((ip[0]&amp;0xf)&l
     <span class="n">trace_block_rq_requeue</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">rq</span><span class="p">);</span>   <span class="c1">// &lt;- Tracepoint hook</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">rq</span><span class="o">-&gt;</span><span class="n">cmd_flags</span> <span class="o">&amp;</span> <span class="n">REQ_QUEUED</span><span class="p">)</span>
-        <span class="n">blk_queue_end_tag</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">rq</span><span class="p">);</span>
-
-    <span class="n">BUG_ON</span><span class="p">(</span><span class="n">blk_queued_rq</span><span class="p">(</span><span class="n">rq</span><span class="p">));</span>
-
-    <span class="n">elv_requeue_request</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">rq</span><span class="p">);</span>
-<span class="p">}</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">blk_requeue_request</span><span class="p">(</span><span class="k">struct</span> <span class="n">request_queue</span> <span class="o">*</span><span class="n">q</span><span class="p">,</span> <span class="k">struct</span> <span class="n">request</span> <span class="o">*</span><span class="n">rq</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">blk_delete_timer</span><span class="p">(</span><span class="n">rq</span><span class="p">);</span>
-    <span class="n">blk_clear_rq_complete</span><span class="p">(</span><span class="n">rq</span><span class="p">);</span>
-    <span class="n">trace_block_rq_requeue</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">rq</span><span class="p">);</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">rq</span><span class="o">-&gt;</span><span class="n">cmd_flags</span> <span class="o">&amp;</span> <span class="n">REQ_QUEUED</span><span class="p">)</span><span class="n">x</span>
         <span class="n">blk_queue_end_tag</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">rq</span><span class="p">);</span>
 
     <span class="n">BUG_ON</span><span class="p">(</span><span class="n">blk_queued_rq</span><span class="p">(</span><span class="n">rq</span><span class="p">));</span>
@@ -12302,7 +12281,7 @@ sudo cat /sys/kernel/debug/kprobes/list
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span>%%bash
@@ -12324,7 +12303,7 @@ sudo sh -c <span class="s1">&#39;echo p:demo_probe blk_delete_timer &gt;&gt; /sy
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span>%%bash
@@ -12335,28 +12314,10 @@ sudo cat /sys/kernel/debug/kprobes/list
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>00000000356f0433  k  blk_delete_timer+0x0    [DISABLED][FTRACE]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span>%%bash
@@ -12364,24 +12325,6 @@ sudo perf list <span class="p">|</span> grep demo
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>  kprobes:demo_probe                                 [Tracepoint event]
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -12415,10 +12358,10 @@ sudo perf stat -a -e kprobes:demo_probe sleep <span class="m">10</span>
 <h1 id="Removing-KProbe">Removing KProbe<a class="anchor-link" href="#Removing-KProbe">&#182;</a></h1>
 </div>
 </div>
-</div><div class="fragment">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span>%%bash
@@ -12432,7 +12375,7 @@ sudo sh -c <span class="s1">&#39;echo &quot;-:demo_probe&quot; &gt;&gt; /sys/ker
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span>%%bash
@@ -12443,10 +12386,10 @@ sudo cat /sys/kernel/debug/kprobes/list
 </div>
 </div>
 
-</div></div><div class="fragment">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span>%%bash
@@ -12457,7 +12400,643 @@ sudo perf list <span class="p">|</span> grep demo
 </div>
 </div>
 
-</div></div></section></section>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="EBPF">EBPF<a class="anchor-link" href="#EBPF">&#182;</a></h1>
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Recent-Developments:-eBPF">Recent Developments: eBPF<a class="anchor-link" href="#Recent-Developments:-eBPF">&#182;</a></h1><ul>
+<li><code>v3.15</code>: BPF machine upgrade (64bit registers, more registers, new instruction)</li>
+<li><code>v3.16</code>: JIT compiling</li>
+<li><code>v3.18</code>: BPF maps</li>
+<li><code>v4.1</code>: attach BPF programs to kprobes</li>
+<li><code>v4.7</code>: attach BPF programs to tracepoints</li>
+<li><code>v4.8</code>: <a href="https://www.iovisor.org/technology/xdp">XDP</a></li>
+<li>...</li>
+</ul>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eBPF-Maps">eBPF Maps<a class="anchor-link" href="#eBPF-Maps">&#182;</a></h1><ul>
+<li>15+ map types: <code>BPF_MAP_TYPE_HASH</code>, <code>BPF_MAP_TYPE_ARRAY</code>, <code>BPF_MAP_TYPE_PROG_ARRAY</code>,                <code>BPF_MAP_TYPE_PERF_EVENT_ARRAY</code>, ...</li>
+<li>associated to a userspace process</li>
+<li>read/written by userspace process, eBPF programs</li>
+</ul>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eBPF-Map-Operations">eBPF Map Operations<a class="anchor-link" href="#eBPF-Map-Operations">&#182;</a></h1><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">bpf_create_map</span><span class="p">(</span><span class="k">enum</span> <span class="n">bpf_map_type</span> <span class="n">map_type</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">key_size</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">value_size</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">max_entries</span><span class="p">)</span>
+<span class="kt">int</span> <span class="n">bpf_lookup_elem</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">value</span><span class="p">)</span>
+<span class="kt">int</span> <span class="n">bpf_update_elem</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="kt">uint64_t</span> <span class="n">flags</span><span class="p">)</span>
+<span class="kt">int</span> <span class="n">bpf_delete_elem</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">key</span><span class="p">)</span>
+<span class="kt">int</span> <span class="n">bpf_get_next_key</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">next_key</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eBPF-Programs">eBPF Programs<a class="anchor-link" href="#eBPF-Programs">&#182;</a></h1><ul>
+<li>20+ program types: <code>BPF_PROG_TYPE_SOCKET_FILTER</code>, <code>BPF_PROG_TYPE_KPROBE</code>, <code>BPF_PROG_TYPE_TRACEPOINT</code>, <code>BPF_PROG_TYPE_XDP</code>, ...</li>
+<li>associated to a userspace process</li>
+<li>event-based execution (e.g. tracepoint hooks)</li>
+<li>executed by BPF VM<ul>
+<li>safe</li>
+<li>efficient</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eBPF-Program-Operations">eBPF Program Operations<a class="anchor-link" href="#eBPF-Program-Operations">&#182;</a></h1><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">bpf_prog_load</span><span class="p">(</span><span class="k">enum</span> <span class="n">bpf_prog_type</span> <span class="n">type</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">bpf_insn</span> <span class="o">*</span><span class="n">insns</span><span class="p">,</span> <span class="kt">int</span> <span class="n">insn_cnt</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">license</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eBPF-Program-as-C-struct">eBPF Program as C struct<a class="anchor-link" href="#eBPF-Program-as-C-struct">&#182;</a></h1><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">bpf_insn</span> <span class="n">prog</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+     <span class="n">BPF_MOV64_REG</span><span class="p">(</span><span class="n">BPF_REG_6</span><span class="p">,</span> <span class="n">BPF_REG_1</span><span class="p">),</span>        <span class="cm">/* r6 = r1 */</span>
+     <span class="n">BPF_LD_ABS</span><span class="p">(</span><span class="n">BPF_B</span><span class="p">,</span> <span class="n">ETH_HLEN</span> <span class="o">+</span> <span class="n">offsetof</span><span class="p">(</span><span class="k">struct</span> <span class="n">iphdr</span><span class="p">,</span> <span class="n">protocol</span><span class="p">)),</span>
+                                       <span class="cm">/* r0 = ip-&gt;proto */</span>
+     <span class="n">BPF_STX_MEM</span><span class="p">(</span><span class="n">BPF_W</span><span class="p">,</span> <span class="n">BPF_REG_10</span><span class="p">,</span> <span class="n">BPF_REG_0</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">),</span>
+                                       <span class="cm">/* *(u32 *)(fp - 4) = r0 */</span>
+     <span class="n">BPF_MOV64_REG</span><span class="p">(</span><span class="n">BPF_REG_2</span><span class="p">,</span> <span class="n">BPF_REG_10</span><span class="p">),</span>       <span class="cm">/* r2 = fp */</span>
+     <span class="n">BPF_ALU64_IMM</span><span class="p">(</span><span class="n">BPF_ADD</span><span class="p">,</span> <span class="n">BPF_REG_2</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">),</span>      <span class="cm">/* r2 = r2 - 4 */</span>
+     <span class="n">BPF_LD_MAP_FD</span><span class="p">(</span><span class="n">BPF_REG_1</span><span class="p">,</span> <span class="n">map_fd</span><span class="p">),</span>           <span class="cm">/* r1 = map_fd */</span>
+     <span class="n">BPF_CALL_FUNC</span><span class="p">(</span><span class="n">BPF_FUNC_map_lookup_elem</span><span class="p">),</span>
+                                       <span class="cm">/* r0 = map_lookup(r1, r2) */</span>
+     <span class="n">BPF_JMP_IMM</span><span class="p">(</span><span class="n">BPF_JEQ</span><span class="p">,</span> <span class="n">BPF_REG_0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                                       <span class="cm">/* if (r0 == 0) goto pc+2 */</span>
+     <span class="n">BPF_MOV64_IMM</span><span class="p">(</span><span class="n">BPF_REG_1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>                <span class="cm">/* r1 = 1 */</span>
+     <span class="n">BPF_XADD</span><span class="p">(</span><span class="n">BPF_DW</span><span class="p">,</span> <span class="n">BPF_REG_0</span><span class="p">,</span> <span class="n">BPF_REG_1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                       <span class="cm">/* lock *(u64 *) r0 += r1 */</span>
+     <span class="n">BPF_MOV64_IMM</span><span class="p">(</span><span class="n">BPF_REG_0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>                <span class="cm">/* r0 = 0 */</span>
+     <span class="n">BPF_EXIT_INSN</span><span class="p">(),</span>                            <span class="cm">/* return r0 */</span>
+<span class="p">};</span>
+</pre></div>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eBPF-Program-as-C-Code">eBPF Program as C Code<a class="anchor-link" href="#eBPF-Program-as-C-Code">&#182;</a></h1><p>Can be compiled with LLVM/Clang using the BPF backend.</p>
+<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">bpf_prog1</span><span class="p">(</span><span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">ctx</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="cm">/* attaches to kprobe netif_receive_skb,</span>
+<span class="cm">     * looks for packets on loobpack device and prints them</span>
+<span class="cm">     */</span>
+    <span class="kt">char</span> <span class="n">devname</span><span class="p">[</span><span class="n">IFNAMSIZ</span><span class="p">];</span>
+    <span class="k">struct</span> <span class="n">net_device</span> <span class="o">*</span><span class="n">dev</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">sk_buff</span> <span class="o">*</span><span class="n">skb</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
+
+    <span class="cm">/* non-portable! works for the given kernel only */</span>
+    <span class="n">skb</span> <span class="o">=</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sk_buff</span> <span class="o">*</span><span class="p">)</span> <span class="n">PT_REGS_PARM1</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="n">skb</span><span class="o">-&gt;</span><span class="n">dev</span><span class="p">);</span>
+    <span class="n">len</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="n">skb</span><span class="o">-&gt;</span><span class="n">len</span><span class="p">);</span>
+
+    <span class="n">bpf_probe_read</span><span class="p">(</span><span class="n">devname</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">devname</span><span class="p">),</span> <span class="n">dev</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">devname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;l&#39;</span> <span class="o">&amp;&amp;</span> <span class="n">devname</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;o&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">char</span> <span class="n">fmt</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&quot;skb %p len %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+        <span class="cm">/* using bpf_trace_printk() for DEBUG ONLY */</span>
+        <span class="n">bpf_trace_printk</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">fmt</span><span class="p">),</span> <span class="n">skb</span><span class="p">,</span> <span class="n">len</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eBPF-based-Monitoring">eBPF-based Monitoring<a class="anchor-link" href="#eBPF-based-Monitoring">&#182;</a></h1><p><img src="ebpf.svg" alt="eBPF Monitoring" title="eBPF-based Monitoring"></p>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eBPF-WorkFlow:-Linux-Kernel-BPF-Samples">eBPF WorkFlow: Linux Kernel BPF Samples<a class="anchor-link" href="#eBPF-WorkFlow:-Linux-Kernel-BPF-Samples">&#182;</a></h1><ul>
+<li>see <code>linux/samples/bpf</code></li>
+<li>eBPF kernel part (.c) <ul>
+<li>contains map and program definitions</li>
+<li>compiled with LLVM -&gt; .o</li>
+</ul>
+</li>
+<li>eBPF user part (.c) <ul>
+<li>compiles to executable</li>
+<li>extracts maps and programs from kernel part (.o)</li>
+<li>creates maps: <code>bpf_create_map</code></li>
+<li>relocates maps in program codes</li>
+<li>loads programs: <code>bpf_prog_load</code></li>
+<li>reads maps and generates output</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eBPF-WorkFlow:-iovisor/bcc">eBPF WorkFlow: <code>iovisor/bcc</code><a class="anchor-link" href="#eBPF-WorkFlow:-iovisor/bcc">&#182;</a></h1><ul>
+<li>see <a href="https://github.com/iovisor/bcc">https://github.com/iovisor/bcc</a></li>
+<li>single Python script that contains:<ul>
+<li>definition of eBPF maps</li>
+<li>definition of eBPF programs (as LLVM compatible C code)</li>
+<li>code to read and process the maps</li>
+</ul>
+</li>
+<li>C code is compiled when the script starts (LLVM)</li>
+</ul>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="eBPF-Example">eBPF Example<a class="anchor-link" href="#eBPF-Example">&#182;</a></h1><p><a href="https://github.com/iovisor/bcc/blob/master/tools/filelife.py">https://github.com/iovisor/bcc/blob/master/tools/filelife.py</a></p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># @lint-avoid-python-3-compatibility-imports</span>
+<span class="c1">#</span>
+<span class="c1"># filelife    Trace the lifespan of short-lived files.</span>
+<span class="c1">#             For Linux, uses BCC, eBPF. Embedded C.</span>
+<span class="c1">#</span>
+<span class="c1"># This traces the creation and deletion of files, providing information</span>
+<span class="c1"># on who deleted the file, the file age, and the file name. The intent is to</span>
+<span class="c1"># provide information on short-lived files, for debugging or performance</span>
+<span class="c1"># analysis.</span>
+<span class="c1">#</span>
+<span class="c1"># USAGE: filelife [-h] [-p PID]</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright 2016 Netflix, Inc.</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)</span>
+<span class="c1">#</span>
+<span class="c1"># 08-Feb-2015   Brendan Gregg   Created this.</span>
+<span class="c1"># 17-Feb-2016   Allan McAleavy updated for BPF_PERF_OUTPUT</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">bcc</span> <span class="kn">import</span> <span class="n">BPF</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">strftime</span>
+<span class="kn">import</span> <span class="nn">ctypes</span> <span class="kn">as</span> <span class="nn">ct</span>
+
+<span class="c1"># arguments</span>
+<span class="n">examples</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;examples:</span>
+<span class="s2">    ./filelife           # trace all stat() syscalls</span>
+<span class="s2">    ./filelife -p 181    # only trace PID 181</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Trace stat() syscalls&quot;</span><span class="p">,</span>
+    <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+    <span class="n">epilog</span><span class="o">=</span><span class="n">examples</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-p&quot;</span><span class="p">,</span> <span class="s2">&quot;--pid&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;trace this PID only&quot;</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--ebpf&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+<span class="n">debug</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1"># define BPF program</span>
+<span class="n">bpf_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">#include &lt;uapi/linux/ptrace.h&gt;</span>
+<span class="s2">#include &lt;linux/fs.h&gt;</span>
+<span class="s2">#include &lt;linux/sched.h&gt;</span>
+<span class="s2">struct data_t {</span>
+<span class="s2">    u32 pid;</span>
+<span class="s2">    u64 delta;</span>
+<span class="s2">    char comm[TASK_COMM_LEN];</span>
+<span class="s2">    char fname[DNAME_INLINE_LEN];</span>
+<span class="s2">};</span>
+<span class="s2">BPF_HASH(birth, struct dentry *);</span>
+<span class="s2">BPF_PERF_OUTPUT(events);</span>
+<span class="s2">// trace file creation time</span>
+<span class="s2">int trace_create(struct pt_regs *ctx, struct inode *dir, struct dentry *dentry)</span>
+<span class="s2">{</span>
+<span class="s2">    u32 pid = bpf_get_current_pid_tgid();</span>
+<span class="s2">    FILTER</span>
+<span class="s2">    u64 ts = bpf_ktime_get_ns();</span>
+<span class="s2">    birth.update(&amp;dentry, &amp;ts);</span>
+<span class="s2">    return 0;</span>
+<span class="s2">};</span>
+<span class="s2">// trace file deletion and output details</span>
+<span class="s2">int trace_unlink(struct pt_regs *ctx, struct inode *dir, struct dentry *dentry)</span>
+<span class="s2">{</span>
+<span class="s2">    struct data_t data = {};</span>
+<span class="s2">    u32 pid = bpf_get_current_pid_tgid();</span>
+<span class="s2">    FILTER</span>
+<span class="s2">    u64 *tsp, delta;</span>
+<span class="s2">    tsp = birth.lookup(&amp;dentry);</span>
+<span class="s2">    if (tsp == 0) {</span>
+<span class="s2">        return 0;   // missed create</span>
+<span class="s2">    }</span>
+<span class="s2">    delta = (bpf_ktime_get_ns() - *tsp) / 1000000;</span>
+<span class="s2">    birth.delete(&amp;dentry);</span>
+<span class="s2">    struct qstr d_name = dentry-&gt;d_name;</span>
+<span class="s2">    if (d_name.len == 0)</span>
+<span class="s2">        return 0;</span>
+<span class="s2">    if (bpf_get_current_comm(&amp;data.comm, sizeof(data.comm)) == 0) {</span>
+<span class="s2">        data.pid = pid;</span>
+<span class="s2">        data.delta = delta;</span>
+<span class="s2">        bpf_probe_read(&amp;data.fname, sizeof(data.fname), d_name.name);</span>
+<span class="s2">    }</span>
+<span class="s2">    events.perf_submit(ctx, &amp;data, sizeof(data));</span>
+<span class="s2">    return 0;</span>
+<span class="s2">}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">TASK_COMM_LEN</span> <span class="o">=</span> <span class="mi">16</span>            <span class="c1"># linux/sched.h</span>
+<span class="n">DNAME_INLINE_LEN</span> <span class="o">=</span> <span class="mi">255</span>        <span class="c1"># linux/dcache.h</span>
+
+<span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">ct</span><span class="o">.</span><span class="n">Structure</span><span class="p">):</span>
+    <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;pid&quot;</span><span class="p">,</span> <span class="n">ct</span><span class="o">.</span><span class="n">c_uint</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="n">ct</span><span class="o">.</span><span class="n">c_ulonglong</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;comm&quot;</span><span class="p">,</span> <span class="n">ct</span><span class="o">.</span><span class="n">c_char</span> <span class="o">*</span> <span class="n">TASK_COMM_LEN</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;fname&quot;</span><span class="p">,</span> <span class="n">ct</span><span class="o">.</span><span class="n">c_char</span> <span class="o">*</span> <span class="n">DNAME_INLINE_LEN</span><span class="p">)</span>
+    <span class="p">]</span>
+
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">pid</span><span class="p">:</span>
+    <span class="n">bpf_text</span> <span class="o">=</span> <span class="n">bpf_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;FILTER&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;if (pid != </span><span class="si">%s</span><span class="s1">) { return 0; }&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">bpf_text</span> <span class="o">=</span> <span class="n">bpf_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;FILTER&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">debug</span> <span class="ow">or</span> <span class="n">args</span><span class="o">.</span><span class="n">ebpf</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">bpf_text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">ebpf</span><span class="p">:</span>
+        <span class="nb">exit</span><span class="p">()</span>
+
+<span class="c1"># initialize BPF</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">BPF</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">bpf_text</span><span class="p">)</span>
+<span class="n">b</span><span class="o">.</span><span class="n">attach_kprobe</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;vfs_create&quot;</span><span class="p">,</span> <span class="n">fn_name</span><span class="o">=</span><span class="s2">&quot;trace_create&quot;</span><span class="p">)</span>
+<span class="c1"># newer kernels (say, 4.8) may don&#39;t fire vfs_create, so record (or overwrite)</span>
+<span class="c1"># the timestamp in security_inode_create():</span>
+<span class="n">b</span><span class="o">.</span><span class="n">attach_kprobe</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;security_inode_create&quot;</span><span class="p">,</span> <span class="n">fn_name</span><span class="o">=</span><span class="s2">&quot;trace_create&quot;</span><span class="p">)</span>
+<span class="n">b</span><span class="o">.</span><span class="n">attach_kprobe</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;vfs_unlink&quot;</span><span class="p">,</span> <span class="n">fn_name</span><span class="o">=</span><span class="s2">&quot;trace_unlink&quot;</span><span class="p">)</span>
+
+<span class="c1"># header</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%-8s</span><span class="s2"> </span><span class="si">%-6s</span><span class="s2"> </span><span class="si">%-16s</span><span class="s2"> </span><span class="si">%-7s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;TIME&quot;</span><span class="p">,</span> <span class="s2">&quot;PID&quot;</span><span class="p">,</span> <span class="s2">&quot;COMM&quot;</span><span class="p">,</span> <span class="s2">&quot;AGE(s)&quot;</span><span class="p">,</span> <span class="s2">&quot;FILE&quot;</span><span class="p">))</span>
+
+<span class="c1"># process event</span>
+<span class="k">def</span> <span class="nf">print_event</span><span class="p">(</span><span class="n">cpu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ct</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">Data</span><span class="p">))</span><span class="o">.</span><span class="n">contents</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%-8s</span><span class="s2"> </span><span class="si">%-6d</span><span class="s2"> </span><span class="si">%-16s</span><span class="s2"> </span><span class="si">%-7.2f</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span> <span class="n">event</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">delta</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">fname</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">)))</span>
+
+<span class="n">b</span><span class="p">[</span><span class="s2">&quot;events&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">open_perf_buffer</span><span class="p">(</span><span class="n">print_event</span><span class="p">)</span>
+<span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+<span class="n">b</span><span class="o">.</span><span class="n">perf_buffer_poll</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Prometheus-eBPF-Exporter">Prometheus eBPF Exporter<a class="anchor-link" href="#Prometheus-eBPF-Exporter">&#182;</a></h1>
+</div>
+</div>
+</div><div class="fragment">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<blockquote><p>Motivation of this exporter is to allow you to write eBPF code and export metrics that are not otherwise accessible from the Linux kernel.</p>
+<ul>
+<li><a href="https://github.com/cloudflare/ebpf_exporter">https://github.com/cloudflare/ebpf_exporter</a></li>
+</ul>
+</blockquote>
+<ul>
+<li>leverages on tools made by <code>iovisor/bcc</code></li>
+<li>written in go</li>
+<li>exported metrics are defined as yaml files</li>
+</ul>
+
+</div>
+</div>
+</div></div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Prometheus-eBPF-Exporter---Example">Prometheus eBPF Exporter - Example<a class="anchor-link" href="#Prometheus-eBPF-Exporter---Example">&#182;</a></h1><p><a href="https://github.com/cloudflare/ebpf_exporter/blob/master/examples/bio.yaml">https://github.com/cloudflare/ebpf_exporter/blob/master/examples/bio.yaml</a></p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">programs</span><span class="p p-Indicator">:</span>
+  <span class="c1"># See:</span>
+  <span class="c1"># * https://github.com/iovisor/bcc/blob/master/tools/biolatency.py</span>
+  <span class="c1"># * https://github.com/iovisor/bcc/blob/master/tools/biolatency_example.txt</span>
+  <span class="c1">#</span>
+  <span class="c1"># See also: bio-tracepoints.yaml</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bio</span>
+    <span class="l l-Scalar l-Scalar-Plain">metrics</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">histograms</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bio_latency_seconds</span>
+          <span class="l l-Scalar l-Scalar-Plain">help</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Block IO latency histogram</span>
+          <span class="l l-Scalar l-Scalar-Plain">table</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">io_latency</span>
+          <span class="l l-Scalar l-Scalar-Plain">bucket_type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">exp2</span>
+          <span class="l l-Scalar l-Scalar-Plain">bucket_min</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+          <span class="l l-Scalar l-Scalar-Plain">bucket_max</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">26</span>
+          <span class="l l-Scalar l-Scalar-Plain">bucket_multiplier</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0.000001</span> <span class="c1"># microseconds to seconds</span>
+          <span class="l l-Scalar l-Scalar-Plain">labels</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">device</span>
+              <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">32</span>
+              <span class="l l-Scalar l-Scalar-Plain">decoders</span><span class="p p-Indicator">:</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">string</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">operation</span>
+              <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>
+              <span class="l l-Scalar l-Scalar-Plain">decoders</span><span class="p p-Indicator">:</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">uint</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">static_map</span>
+                  <span class="l l-Scalar l-Scalar-Plain">static_map</span><span class="p p-Indicator">:</span>
+                    <span class="l l-Scalar l-Scalar-Plain">1</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">read</span>
+                    <span class="l l-Scalar l-Scalar-Plain">2</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">write</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bucket</span>
+              <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>
+              <span class="l l-Scalar l-Scalar-Plain">decoders</span><span class="p p-Indicator">:</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">uint</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bio_size_bytes</span>
+          <span class="l l-Scalar l-Scalar-Plain">help</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Block IO size histogram with kibibyte buckets</span>
+          <span class="l l-Scalar l-Scalar-Plain">table</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">io_size</span>
+          <span class="l l-Scalar l-Scalar-Plain">bucket_type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">exp2</span>
+          <span class="l l-Scalar l-Scalar-Plain">bucket_min</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+          <span class="l l-Scalar l-Scalar-Plain">bucket_max</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">15</span>
+          <span class="l l-Scalar l-Scalar-Plain">bucket_multiplier</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1024</span> <span class="c1"># kibibytes to bytes</span>
+          <span class="l l-Scalar l-Scalar-Plain">labels</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">device</span>
+              <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">32</span>
+              <span class="l l-Scalar l-Scalar-Plain">decoders</span><span class="p p-Indicator">:</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">string</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">operation</span>
+              <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>
+              <span class="l l-Scalar l-Scalar-Plain">decoders</span><span class="p p-Indicator">:</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">uint</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">static_map</span>
+                  <span class="l l-Scalar l-Scalar-Plain">static_map</span><span class="p p-Indicator">:</span>
+                    <span class="l l-Scalar l-Scalar-Plain">1</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">read</span>
+                    <span class="l l-Scalar l-Scalar-Plain">2</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">write</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bucket</span>
+              <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>
+              <span class="l l-Scalar l-Scalar-Plain">decoders</span><span class="p p-Indicator">:</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">uint</span>
+    <span class="l l-Scalar l-Scalar-Plain">kprobes</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">blk_start_request</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">trace_req_start</span>
+      <span class="l l-Scalar l-Scalar-Plain">blk_mq_start_request</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">trace_req_start</span>
+      <span class="l l-Scalar l-Scalar-Plain">blk_account_io_completion</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">trace_req_completion</span>
+    <span class="l l-Scalar l-Scalar-Plain">code</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">#include &lt;linux/blkdev.h&gt;</span>
+      <span class="no">#include &lt;linux/blk_types.h&gt;</span>
+      <span class="no">typedef struct disk_key {</span>
+          <span class="no">char disk[32];</span>
+          <span class="no">u8 op;</span>
+          <span class="no">u64 slot;</span>
+      <span class="no">} disk_key_t;</span>
+      <span class="no">// Max number of disks we expect to see on the host</span>
+      <span class="no">const u8 max_disks = 255;</span>
+      <span class="no">// 27 buckets for latency, max range is 33.6s .. 67.1s</span>
+      <span class="no">const u8 max_latency_slot = 26;</span>
+      <span class="no">// 16 buckets per disk in kib, max range is 16mib .. 32mib</span>
+      <span class="no">const u8 max_size_slot = 15;</span>
+      <span class="no">// Hash to temporily hold the start time of each bio request, max 10k in-flight by default</span>
+      <span class="no">BPF_HASH(start, struct request *);</span>
+      <span class="no">// Histograms to record latencies</span>
+      <span class="no">BPF_HISTOGRAM(io_latency, disk_key_t, (max_latency_slot + 1) * max_disks);</span>
+      <span class="no">// Histograms to record sizes</span>
+      <span class="no">BPF_HISTOGRAM(io_size, disk_key_t, (max_size_slot + 1) * max_disks);</span>
+      <span class="no">// Record start time of a request</span>
+      <span class="no">int trace_req_start(struct pt_regs *ctx, struct request *req) {</span>
+          <span class="no">u64 ts = bpf_ktime_get_ns();</span>
+          <span class="no">start.update(&amp;req, &amp;ts);</span>
+          <span class="no">return 0;</span>
+      <span class="no">}</span>
+      <span class="no">// Calculate request duration and store in appropriate histogram bucket</span>
+      <span class="no">int trace_req_completion(struct pt_regs *ctx, struct request *req, unsigned int bytes) {</span>
+          <span class="no">u64 *tsp, delta;</span>
+          <span class="no">// Fetch timestamp and calculate delta</span>
+          <span class="no">tsp = start.lookup(&amp;req);</span>
+          <span class="no">if (tsp == 0) {</span>
+              <span class="no">return 0; // missed issue</span>
+          <span class="no">}</span>
+          <span class="no">// There are write request with zero length on sector zero,</span>
+          <span class="no">// which do not seem to be real writes to device.</span>
+          <span class="no">if (req-&gt;__sector == 0 &amp;&amp; req-&gt;__data_len == 0) {</span>
+            <span class="no">return 0;</span>
+          <span class="no">}</span>
+          <span class="no">// Disk that received the request</span>
+          <span class="no">struct gendisk *disk = req-&gt;rq_disk;</span>
+          <span class="no">// Delta in nanoseconds</span>
+          <span class="no">delta = bpf_ktime_get_ns() - *tsp;</span>
+          <span class="no">// Convert to microseconds</span>
+          <span class="no">delta /= 1000;</span>
+          <span class="no">// Latency histogram key</span>
+          <span class="no">u64 latency_slot = bpf_log2l(delta);</span>
+          <span class="no">// Cap latency bucket at max value</span>
+          <span class="no">if (latency_slot &gt; max_latency_slot) {</span>
+              <span class="no">latency_slot = max_latency_slot;</span>
+          <span class="no">}</span>
+          <span class="no">disk_key_t latency_key = { .slot = latency_slot };</span>
+          <span class="no">bpf_probe_read(&amp;latency_key.disk, sizeof(latency_key.disk), &amp;disk-&gt;disk_name);</span>
+          <span class="no">// Request size histogram key</span>
+          <span class="no">u64 size_slot = bpf_log2(bytes / 1024);</span>
+          <span class="no">// Cap latency bucket at max value</span>
+          <span class="no">if (size_slot &gt; max_size_slot) {</span>
+              <span class="no">size_slot = max_size_slot;</span>
+          <span class="no">}</span>
+          <span class="no">disk_key_t size_key = { .slot = size_slot };</span>
+          <span class="no">bpf_probe_read(&amp;size_key.disk, sizeof(size_key.disk), &amp;disk-&gt;disk_name);</span>
+          <span class="no">if ((req-&gt;cmd_flags &amp; REQ_OP_MASK) == REQ_OP_WRITE) {</span>
+              <span class="no">latency_key.op = 2;</span>
+              <span class="no">size_key.op    = 2;</span>
+          <span class="no">} else {</span>
+              <span class="no">latency_key.op = 1;</span>
+              <span class="no">size_key.op    = 1;</span>
+          <span class="no">}</span>
+          <span class="no">io_latency.increment(latency_key);</span>
+          <span class="no">io_size.increment(size_key);</span>
+          <span class="no">start.delete(&amp;req);</span>
+          <span class="no">return 0;</span>
+      <span class="no">}</span>
+</pre></div>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Using-eBPF-for-Monitoring-in-Cloud-Native-Environment">Using eBPF for Monitoring in Cloud-Native Environment<a class="anchor-link" href="#Using-eBPF-for-Monitoring-in-Cloud-Native-Environment">&#182;</a></h1>
+</div>
+</div>
+</div><div class="fragment">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Cloud Native:</p>
+<ul>
+<li>microservice architecture</li>
+<li>containerized</li>
+<li>orchestrated</li>
+</ul>
+
+</div>
+</div>
+</div></div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Pitfall-#1:-Dependencies">Pitfall #1: Dependencies<a class="anchor-link" href="#Pitfall-#1:-Dependencies">&#182;</a></h1><ul>
+<li>Linux Kernel headers</li>
+<li>bcc</li>
+<li>LLVM</li>
+</ul>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Pitfall-#2:-KProbes-and-Kernel-Version">Pitfall #2: KProbes and Kernel Version<a class="anchor-link" href="#Pitfall-#2:-KProbes-and-Kernel-Version">&#182;</a></h1><div class="highlight"><pre><span></span><span class="k">static</span> <span class="kt">int</span> <span class="nf">bpf_prog_load</span><span class="p">(</span><span class="k">union</span> <span class="n">bpf_attr</span> <span class="o">*</span><span class="n">attr</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">enum</span> <span class="n">bpf_prog_type</span> <span class="n">type</span> <span class="o">=</span> <span class="n">attr</span><span class="o">-&gt;</span><span class="n">prog_type</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">bpf_prog</span> <span class="o">*</span><span class="n">prog</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">err</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">license</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+    <span class="kt">bool</span> <span class="n">is_gpl</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">CHECK_ATTR</span><span class="p">(</span><span class="n">BPF_PROG_LOAD</span><span class="p">))</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">attr</span><span class="o">-&gt;</span><span class="n">prog_flags</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">BPF_F_STRICT_ALIGNMENT</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+
+    <span class="cm">/* copy eBPF program license from user space */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">strncpy_from_user</span><span class="p">(</span><span class="n">license</span><span class="p">,</span> <span class="n">u64_to_user_ptr</span><span class="p">(</span><span class="n">attr</span><span class="o">-&gt;</span><span class="n">license</span><span class="p">),</span>
+                  <span class="k">sizeof</span><span class="p">(</span><span class="n">license</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">EFAULT</span><span class="p">;</span>
+    <span class="n">license</span><span class="p">[</span><span class="k">sizeof</span><span class="p">(</span><span class="n">license</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="cm">/* eBPF programs must be GPL compatible to use GPL-ed functions */</span>
+    <span class="n">is_gpl</span> <span class="o">=</span> <span class="n">license_is_gpl_compatible</span><span class="p">(</span><span class="n">license</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">attr</span><span class="o">-&gt;</span><span class="n">insn_cnt</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">attr</span><span class="o">-&gt;</span><span class="n">insn_cnt</span> <span class="o">&gt;</span> <span class="n">BPF_MAXINSNS</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">E2BIG</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">type</span> <span class="o">==</span> <span class="n">BPF_PROG_TYPE_KPROBE</span> <span class="o">&amp;&amp;</span>
+        <span class="n">attr</span><span class="o">-&gt;</span><span class="n">kern_version</span> <span class="o">!=</span> <span class="n">LINUX_VERSION_CODE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+    <span class="cm">/* ... */</span>
+<span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Pitfall-#3:-KProbes-and-Stability">Pitfall #3: KProbes and Stability<a class="anchor-link" href="#Pitfall-#3:-KProbes-and-Stability">&#182;</a></h1><ul>
+<li>Kprobe can be created for any kernel function</li>
+<li>Most of the Linux kernel source code is subject to change<ul>
+<li>in-kernel APIs and ABIs are unstable</li>
+</ul>
+</li>
+<li>Distribution-specific kernel modifications, propriatery kernels</li>
+</ul>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Pitfall-#4:-Kernel-Support">Pitfall #4: Kernel Support<a class="anchor-link" href="#Pitfall-#4:-Kernel-Support">&#182;</a></h1><ul>
+<li><code>v4.1</code>: attach BPF programs to kprobes (21 June, 2015)</li>
+<li><code>v4.7</code>: attach BPF programs to tracepoints (24 July, 2016)</li>
+<li>RHEL 7.6 (30 October, 2018) has <code>3.10.0-957</code></li>
+</ul>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Ongoing-Activities">Ongoing Activities<a class="anchor-link" href="#Ongoing-Activities">&#182;</a></h1><ul>
+<li>eBPF-based Prometheus exporter, containerized</li>
+<li>run-time configurable eBPF metrics</li>
+<li>self contained<ul>
+<li>no dep on <code>iovisor/bcc</code></li>
+<li>no dep on Linux kernel headers</li>
+</ul>
+</li>
+<li>supporting the major Linux distributions</li>
+</ul>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Thank-you!">Thank you!<a class="anchor-link" href="#Thank-you!">&#182;</a></h1><h2 id="Questions?">Questions?<a class="anchor-link" href="#Questions?">&#182;</a></h2>
+</div>
+</div>
+</div></section></section>
 </div>
 </div>
 
